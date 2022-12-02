@@ -61,9 +61,19 @@ choiceToPointValue.set("X", 1);
 choiceToPointValue.set("Y", 2);
 choiceToPointValue.set("Z", 3);
 var weaknesses = new Map();
+// Rock (A) is weak to Paper (Y)
 weaknesses.set("A", "Y");
+// Paper (B) is weak to Scissors (Z)
 weaknesses.set("B", "Z");
+// Scissors (C) is weak to Rock (X)
 weaknesses.set("C", "X");
+var opponentToPlayerSigns = new Map();
+// Rock
+opponentToPlayerSigns.set("A", "X");
+// Paper
+opponentToPlayerSigns.set("B", "Y");
+// Scissors
+opponentToPlayerSigns.set("C", "Z");
 var WIN = 6;
 var DRAW = 3;
 var LOSS = 0;
@@ -71,69 +81,69 @@ var LOSS = 0;
 function doTheThing(fileName) {
     var e_1, _a;
     return __awaiter(this, void 0, void 0, function () {
-        var filehandle, playerScore, _b, _c, game, gameChoices, opponentChoice, playerChoice, e_1_1;
-        return __generator(this, function (_d) {
-            switch (_d.label) {
+        var filehandle, totalScore, _b, _c, game, _d, opponentChoice, playerChoice, scoreForRound, e_1_1;
+        return __generator(this, function (_e) {
+            switch (_e.label) {
                 case 0:
-                    playerScore = 0;
-                    _d.label = 1;
+                    totalScore = 0;
+                    _e.label = 1;
                 case 1:
-                    _d.trys.push([1, , 15, 17]);
+                    _e.trys.push([1, , 15, 17]);
                     return [4 /*yield*/, promises_1.open(fileName, 'r')];
                 case 2:
-                    filehandle = _d.sent();
-                    _d.label = 3;
+                    filehandle = _e.sent();
+                    _e.label = 3;
                 case 3:
-                    _d.trys.push([3, 8, 9, 14]);
+                    _e.trys.push([3, 8, 9, 14]);
                     _b = __asyncValues(filehandle.readLines());
-                    _d.label = 4;
+                    _e.label = 4;
                 case 4: return [4 /*yield*/, _b.next()];
                 case 5:
-                    if (!(_c = _d.sent(), !_c.done)) return [3 /*break*/, 7];
+                    if (!(_c = _e.sent(), !_c.done)) return [3 /*break*/, 7];
                     game = _c.value;
-                    gameChoices = game.split(" ");
-                    opponentChoice = gameChoices[0];
-                    playerChoice = gameChoices[1];
-                    // TOOD: Find a better way to handle undefined - right now getting a typescript error
-                    playerScore += choiceToPointValue.get(playerChoice);
-                    if (playerChoice === weaknesses.get(opponentChoice)) {
-                        playerScore += WIN;
-                    }
-                    else if (playerChoice === opponentChoice) {
-                        playerScore += DRAW;
-                    }
-                    else {
-                        playerScore += LOSS;
-                    }
-                    _d.label = 6;
+                    _d = game.split(" "), opponentChoice = _d[0], playerChoice = _d[1];
+                    scoreForRound = choiceToPointValue.get(playerChoice) + rockPaperScissors(opponentChoice, playerChoice);
+                    totalScore += scoreForRound;
+                    _e.label = 6;
                 case 6: return [3 /*break*/, 4];
                 case 7: return [3 /*break*/, 14];
                 case 8:
-                    e_1_1 = _d.sent();
+                    e_1_1 = _e.sent();
                     e_1 = { error: e_1_1 };
                     return [3 /*break*/, 14];
                 case 9:
-                    _d.trys.push([9, , 12, 13]);
+                    _e.trys.push([9, , 12, 13]);
                     if (!(_c && !_c.done && (_a = _b["return"]))) return [3 /*break*/, 11];
                     return [4 /*yield*/, _a.call(_b)];
                 case 10:
-                    _d.sent();
-                    _d.label = 11;
+                    _e.sent();
+                    _e.label = 11;
                 case 11: return [3 /*break*/, 13];
                 case 12:
                     if (e_1) throw e_1.error;
                     return [7 /*endfinally*/];
                 case 13: return [7 /*endfinally*/];
                 case 14:
-                    console.log("Final Score " + playerScore);
+                    console.log("Final Score " + totalScore);
                     return [3 /*break*/, 17];
                 case 15: return [4 /*yield*/, (filehandle === null || filehandle === void 0 ? void 0 : filehandle.close())];
                 case 16:
-                    _d.sent();
+                    _e.sent();
                     return [7 /*endfinally*/];
                 case 17: return [2 /*return*/];
             }
         });
     });
+}
+function rockPaperScissors(opponentChoice, playerChoice) {
+    if (playerChoice === weaknesses.get(opponentChoice)) {
+        return WIN;
+    }
+    else if (playerChoice === opponentToPlayerSigns.get(opponentChoice)) {
+        return DRAW;
+    }
+    else {
+        return LOSS;
+    }
 }
 doTheThing('input.txt');

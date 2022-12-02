@@ -19,9 +19,20 @@ choiceToPointValue.set("Y", 2);
 choiceToPointValue.set("Z", 3);
 
 const weaknesses : Map<String, String> = new Map();
+// Rock (A) is weak to Paper (Y)
 weaknesses.set("A", "Y");
+// Paper (B) is weak to Scissors (Z)
 weaknesses.set("B", "Z");
+// Scissors (C) is weak to Rock (X)
 weaknesses.set("C", "X");
+
+const opponentToPlayerSigns : Map<String, String> = new Map();
+// Rock
+opponentToPlayerSigns.set("A", "X");
+// Paper
+opponentToPlayerSigns.set("B", "Y");
+// Scissors
+opponentToPlayerSigns.set("C", "Z");
 
 const WIN : number = 6;
 const DRAW : number = 3;
@@ -30,34 +41,32 @@ const LOSS : number = 0;
 // 1. Read in file, split on new line
 async function doTheThing(fileName: PathLike) : Promise<void> {
   let filehandle : FileHandle | undefined;
-  let playerScore : number = 0;
+  let totalScore : number = 0;
 
   try {
     filehandle = await open(fileName, 'r');
   
     for await (const game of filehandle.readLines()) {
-     const gameChoices = game.split(" ");
-
-     const opponentChoice = gameChoices[0];
-     const playerChoice = gameChoices[1];
-     
+     const [opponentChoice, playerChoice] : String[] = game.split(" ");
      // TOOD: Find a better way to handle undefined - right now getting a typescript error
-     let scoreForRound : number = 0;
-     scoreForRound += choiceToPointValue.get(playerChoice);
-      
-     if (playerChoice === weaknesses.get(opponentChoice)) {
-      scoreForRound += WIN;
-     } else if (playerChoice === opponentChoice) {
-      scoreForRound += DRAW;
-     } else {
-      scoreForRound += LOSS;
-     }
-      console.log(`The score for the current round is: ${scoreForRound}`);
+     const scoreForRound = choiceToPointValue.get(playerChoice) + rockPaperScissors(opponentChoice, playerChoice);
+     totalScore += scoreForRound; 
     }
-    console.log(`Final Score ${playerScore}`);
+
+    console.log(`Final Score ${totalScore}`);
   } finally {
     await filehandle?.close();
   }
+}
+
+function rockPaperScissors(opponentChoice: String, playerChoice : String) : number {
+  if (playerChoice === weaknesses.get(opponentChoice)) {
+    return WIN;
+   } else if (playerChoice === opponentToPlayerSigns.get(opponentChoice)) {
+    return DRAW;
+   } else {
+    return LOSS;
+   }
 }
 
 doTheThing('input.txt');
