@@ -1,7 +1,6 @@
 const fs = require('fs');
 const yargs = require('yargs');
 const { hideBin } = require('yargs/helpers')
-const { PriorityQueue } = require("js-priority-queue");
 
 // Use y-args to parse the input from the command line
 const argv = yargs(hideBin(process.argv))
@@ -12,6 +11,8 @@ const argv = yargs(hideBin(process.argv))
 .describe('f', 'Load a file')
 .demandOption(['f'])
 .argv;
+
+
 
 
 /** 
