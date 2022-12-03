@@ -43,7 +43,8 @@ var __asyncValues = (this && this.__asyncValues) || function (o) {
     function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
 exports.__esModule = true;
-var promises_1 = require("fs/promises");
+var promises_1 = require("fs").promises;
+console.log(process.version); // 'v10.16.3'
 /**
  * Opponent Choice
  * Rock => A
@@ -60,13 +61,20 @@ var choiceToPointValue = new Map();
 choiceToPointValue.set("X", 1);
 choiceToPointValue.set("Y", 2);
 choiceToPointValue.set("Z", 3);
-var weaknesses = new Map();
+var opponentWeaknesses = new Map();
 // Rock (A) is weak to Paper (Y)
-weaknesses.set("A", "Y");
+opponentWeaknesses.set("A", "Y");
 // Paper (B) is weak to Scissors (Z)
-weaknesses.set("B", "Z");
+opponentWeaknesses.set("B", "Z");
 // Scissors (C) is weak to Rock (X)
-weaknesses.set("C", "X");
+opponentWeaknesses.set("C", "X");
+var playerWeaknesses = new Map();
+// Rock (A) beats Scissors (Z)
+playerWeaknesses.set("A", "Z");
+// Paper (B) beats Rock (X)
+playerWeaknesses.set("B", "X");
+// Scissors (C) beats Paper (Y)
+playerWeaknesses.set("C", "Y");
 var opponentToPlayerSigns = new Map();
 // Rock
 opponentToPlayerSigns.set("A", "X");
@@ -105,7 +113,7 @@ function doTheThing(fileName) {
                     try {
                         game = _c;
                         _g = game.split(" "), opponentChoice = _g[0], playerChoice = _g[1];
-                        scoreForRound = choiceToPointValue.get(playerChoice) + rockPaperScissors(opponentChoice, playerChoice);
+                        scoreForRound = riggedRockPaperScissors(opponentChoice, playerChoice);
                         totalScore += scoreForRound;
                     }
                     finally {
@@ -142,15 +150,19 @@ function doTheThing(fileName) {
         });
     });
 }
-function rockPaperScissors(opponentChoice, playerChoice) {
-    if (playerChoice === weaknesses.get(opponentChoice)) {
-        return WIN;
+function riggedRockPaperScissors(opponentChoice, playerChoice) {
+    if (playerChoice === "X") {
+        // We want to win the game. Find the weakness
+        var opponentWeakness = opponentWeaknesses.get(opponentChoice);
+        return WIN + choiceToPointValue.get(opponentWeakness);
     }
-    else if (playerChoice === opponentToPlayerSigns.get(opponentChoice)) {
-        return DRAW;
+    else if (playerChoice === "Y") {
+        // We want to draw Find the equivalent sign and add the point value
+        var equivalentSignForPlayer = opponentToPlayerSigns.get(opponentChoice);
+        return DRAW + choiceToPointValue.get(equivalentSignForPlayer);
     }
     else {
         return LOSS;
     }
 }
-doTheThing('input.txt');
+doTheThing("sample_input.txt");

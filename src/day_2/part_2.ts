@@ -1,5 +1,6 @@
-import { PathLike } from 'fs';
-import { FileHandle, open } from 'fs/promises';
+import { PathLike } from 'node:fs';
+import { FileHandle, open } from 'node:fs/promises';
+console.log(process.version); // 'v10.16.3'
 
 /** 
  * Opponent Choice
@@ -18,13 +19,22 @@ choiceToPointValue.set("X", 1);
 choiceToPointValue.set("Y", 2);
 choiceToPointValue.set("Z", 3);
 
-const weaknesses : Map<String, String> = new Map();
+const opponentWeaknesses : Map<String, String> = new Map();
 // Rock (A) is weak to Paper (Y)
-weaknesses.set("A", "Y");
+opponentWeaknesses.set("A", "Y");
 // Paper (B) is weak to Scissors (Z)
-weaknesses.set("B", "Z");
+opponentWeaknesses.set("B", "Z");
 // Scissors (C) is weak to Rock (X)
-weaknesses.set("C", "X");
+opponentWeaknesses.set("C", "X");
+
+const playerWeaknesses : Map<String, String> = new Map();
+// Rock (A) beats Scissors (Z)
+playerWeaknesses.set("A", "Z");
+// Paper (B) beats Rock (X)
+playerWeaknesses.set("B", "X");
+// Scissors (C) beats Paper (Y)
+playerWeaknesses.set("C", "Y");
+
 
 const opponentToPlayerSigns : Map<String, String> = new Map();
 // Rock
@@ -49,7 +59,7 @@ async function doTheThing(fileName: PathLike) : Promise<void> {
     for await (const game of filehandle.readLines()) {
      const [opponentChoice, playerChoice] : String[] = game.split(" ");
      // TOOD: Find a better way to handle undefined - right now getting a typescript error
-     const scoreForRound = choiceToPointValue.get(playerChoice) + rockPaperScissors(opponentChoice, playerChoice);
+     const scoreForRound = riggedRockPaperScissors(opponentChoice, playerChoice);
      totalScore += scoreForRound; 
     }
 
@@ -59,14 +69,18 @@ async function doTheThing(fileName: PathLike) : Promise<void> {
   }
 }
 
-function rockPaperScissors(opponentChoice: String, playerChoice : String) : number {
-  if (playerChoice === weaknesses.get(opponentChoice)) {
-    return WIN;
-   } else if (playerChoice === opponentToPlayerSigns.get(opponentChoice)) {
-    return DRAW;
+function riggedRockPaperScissors(opponentChoice: String, playerChoice : String) : number {
+  if (playerChoice === "X") {
+    // We want to win the game. Find the weakness
+    const opponentWeakness =  opponentWeaknesses.get(opponentChoice);
+    return WIN + choiceToPointValue.get(opponentWeakness);
+   } else if (playerChoice === "Y") {
+    // We want to draw Find the equivalent sign and add the point value
+    const equivalentSignForPlayer = opponentToPlayerSigns.get(opponentChoice);
+    return DRAW + choiceToPointValue.get(equivalentSignForPlayer);
    } else {
     return LOSS;
    }
 }
 
-doTheThing('input.txt');
+doTheThing("sample_input.txt");
