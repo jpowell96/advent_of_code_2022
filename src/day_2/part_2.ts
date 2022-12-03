@@ -1,6 +1,4 @@
-import { PathLike } from 'node:fs';
-import { FileHandle, open } from 'node:fs/promises';
-console.log(process.version); // 'v10.16.3'
+const fs = require('fs');
 
 /** 
  * Opponent Choice
@@ -49,34 +47,35 @@ const DRAW : number = 3;
 const LOSS : number = 0;
 
 // 1. Read in file, split on new line
-async function doTheThing(fileName: PathLike) : Promise<void> {
-  let filehandle : FileHandle | undefined;
-  let totalScore : number = 0;
+async function doTheThing(filePath: string) : Promise<void> {
+    let totalScore: number = 0;
+    fs.readFile(filePath, "utf-8", function read(err, data) {
+        if (err) {
+           throw err;
+        }
 
-  try {
-    filehandle = await open(fileName, 'r');
-  
-    for await (const game of filehandle.readLines()) {
-     const [opponentChoice, playerChoice] : String[] = game.split(" ");
-     // TOOD: Find a better way to handle undefined - right now getting a typescript error
-     const scoreForRound = riggedRockPaperScissors(opponentChoice, playerChoice);
-     totalScore += scoreForRound; 
-    }
+        const games = data.split("\n");
 
-    console.log(`Final Score ${totalScore}`);
-  } finally {
-    await filehandle?.close();
-  }
+        for (const game of games) {
+            const [opponentChoice, playerChoice] = game.split(" ");
+            const scoreForRound = riggedRockPaperScissors(opponentChoice, playerChoice);
+            totalScore += scoreForRound;
+        }   
+
+        console.log("Final Score is %d", totalScore);
+    });
+
 }
 
 function riggedRockPaperScissors(opponentChoice: String, playerChoice : String) : number {
-  if (playerChoice === "X") {
+  if (playerChoice === "Z") {
     // We want to win the game. Find the weakness
-    const opponentWeakness =  opponentWeaknesses.get(opponentChoice);
+    const opponentWeakness : String | undefined =  opponentWeaknesses.get(opponentChoice);
     return WIN + choiceToPointValue.get(opponentWeakness);
    } else if (playerChoice === "Y") {
     // We want to draw Find the equivalent sign and add the point value
-    const equivalentSignForPlayer = opponentToPlayerSigns.get(opponentChoice);
+    const equivalentSignForPlayer :  String | undefined = opponentToPlayerSigns.get(opponentChoice);
+    console.log(equivalentSignForPlayer);
     return DRAW + choiceToPointValue.get(equivalentSignForPlayer);
    } else {
     return LOSS;

@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,16 +34,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __asyncValues = (this && this.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
-exports.__esModule = true;
-var promises_1 = require("fs").promises;
-console.log(process.version); // 'v10.16.3'
+var fs = require('fs');
 /**
  * Opponent Choice
  * Rock => A
@@ -86,72 +76,30 @@ var WIN = 6;
 var DRAW = 3;
 var LOSS = 0;
 // 1. Read in file, split on new line
-function doTheThing(fileName) {
-    var _a, e_1, _b, _c;
+function doTheThing(filePath) {
     return __awaiter(this, void 0, void 0, function () {
-        var filehandle, totalScore, _d, _e, _f, game, _g, opponentChoice, playerChoice, scoreForRound, e_1_1;
-        return __generator(this, function (_h) {
-            switch (_h.label) {
-                case 0:
-                    totalScore = 0;
-                    _h.label = 1;
-                case 1:
-                    _h.trys.push([1, , 15, 17]);
-                    return [4 /*yield*/, (0, promises_1.open)(fileName, 'r')];
-                case 2:
-                    filehandle = _h.sent();
-                    _h.label = 3;
-                case 3:
-                    _h.trys.push([3, 8, 9, 14]);
-                    _d = true, _e = __asyncValues(filehandle.readLines());
-                    _h.label = 4;
-                case 4: return [4 /*yield*/, _e.next()];
-                case 5:
-                    if (!(_f = _h.sent(), _a = _f.done, !_a)) return [3 /*break*/, 7];
-                    _c = _f.value;
-                    _d = false;
-                    try {
-                        game = _c;
-                        _g = game.split(" "), opponentChoice = _g[0], playerChoice = _g[1];
-                        scoreForRound = riggedRockPaperScissors(opponentChoice, playerChoice);
-                        totalScore += scoreForRound;
-                    }
-                    finally {
-                        _d = true;
-                    }
-                    _h.label = 6;
-                case 6: return [3 /*break*/, 4];
-                case 7: return [3 /*break*/, 14];
-                case 8:
-                    e_1_1 = _h.sent();
-                    e_1 = { error: e_1_1 };
-                    return [3 /*break*/, 14];
-                case 9:
-                    _h.trys.push([9, , 12, 13]);
-                    if (!(!_d && !_a && (_b = _e["return"]))) return [3 /*break*/, 11];
-                    return [4 /*yield*/, _b.call(_e)];
-                case 10:
-                    _h.sent();
-                    _h.label = 11;
-                case 11: return [3 /*break*/, 13];
-                case 12:
-                    if (e_1) throw e_1.error;
-                    return [7 /*endfinally*/];
-                case 13: return [7 /*endfinally*/];
-                case 14:
-                    console.log("Final Score ".concat(totalScore));
-                    return [3 /*break*/, 17];
-                case 15: return [4 /*yield*/, (filehandle === null || filehandle === void 0 ? void 0 : filehandle.close())];
-                case 16:
-                    _h.sent();
-                    return [7 /*endfinally*/];
-                case 17: return [2 /*return*/];
-            }
+        var totalScore;
+        return __generator(this, function (_a) {
+            totalScore = 0;
+            fs.readFile(filePath, "utf-8", function read(err, data) {
+                if (err) {
+                    throw err;
+                }
+                var games = data.split("\n");
+                for (var _i = 0, games_1 = games; _i < games_1.length; _i++) {
+                    var game = games_1[_i];
+                    var _a = game.split(" "), opponentChoice = _a[0], playerChoice = _a[1];
+                    var scoreForRound = riggedRockPaperScissors(opponentChoice, playerChoice);
+                    totalScore += scoreForRound;
+                }
+                console.log("Final Score is %d", totalScore);
+            });
+            return [2 /*return*/];
         });
     });
 }
 function riggedRockPaperScissors(opponentChoice, playerChoice) {
-    if (playerChoice === "X") {
+    if (playerChoice === "Z") {
         // We want to win the game. Find the weakness
         var opponentWeakness = opponentWeaknesses.get(opponentChoice);
         return WIN + choiceToPointValue.get(opponentWeakness);
@@ -159,6 +107,7 @@ function riggedRockPaperScissors(opponentChoice, playerChoice) {
     else if (playerChoice === "Y") {
         // We want to draw Find the equivalent sign and add the point value
         var equivalentSignForPlayer = opponentToPlayerSigns.get(opponentChoice);
+        console.log(equivalentSignForPlayer);
         return DRAW + choiceToPointValue.get(equivalentSignForPlayer);
     }
     else {
