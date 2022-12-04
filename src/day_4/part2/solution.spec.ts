@@ -40,6 +40,14 @@ describe("Overlap test cases", () => {
         const right = [6,8];
         console.log(left[1] >= right[0]);
         console.log(left[1] >= right[1]);
+        debugger;
+        expect(overlaps(left, right)).toBe(false);
+    })
+
+    test("Two pairs that do not overlap reversed", () => {
+        const left = [6,8];
+        const right = [2,4];
+        debugger;
         expect(overlaps(left, right)).toBe(false);
     })
 
