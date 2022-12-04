@@ -51,20 +51,24 @@ var choiceToPointValue = new Map();
 choiceToPointValue.set("X", 1);
 choiceToPointValue.set("Y", 2);
 choiceToPointValue.set("Z", 3);
-var opponentWeaknesses = new Map();
+var opponentToPointValue = new Map();
+choiceToPointValue.set("A", 1);
+choiceToPointValue.set("B", 2);
+choiceToPointValue.set("C", 3);
+var opponentWeaknesToPointValue = new Map();
 // Rock (A) is weak to Paper (Y)
-opponentWeaknesses.set("A", "Y");
+opponentWeaknesToPointValue.set("A", 2);
 // Paper (B) is weak to Scissors (Z)
-opponentWeaknesses.set("B", "Z");
+opponentWeaknesToPointValue.set("B", 3);
 // Scissors (C) is weak to Rock (X)
-opponentWeaknesses.set("C", "X");
+opponentWeaknesToPointValue.set("C", 1);
 var playerWeaknesses = new Map();
 // Rock (A) beats Scissors (Z)
-playerWeaknesses.set("A", "Z");
+playerWeaknesses.set("A", 3);
 // Paper (B) beats Rock (X)
-playerWeaknesses.set("B", "X");
+playerWeaknesses.set("B", 1);
 // Scissors (C) beats Paper (Y)
-playerWeaknesses.set("C", "Y");
+playerWeaknesses.set("C", 2);
 var opponentToPlayerSigns = new Map();
 // Rock
 opponentToPlayerSigns.set("A", "X");
@@ -101,17 +105,16 @@ function doTheThing(filePath) {
 function riggedRockPaperScissors(opponentChoice, playerChoice) {
     if (playerChoice === "Z") {
         // We want to win the game. Find the weakness
-        var opponentWeakness = opponentWeaknesses.get(opponentChoice);
-        return WIN + choiceToPointValue.get(opponentWeakness);
+        var opponentWeakness = opponentWeaknesToPointValue.get(opponentChoice);
+        return WIN + opponentWeakness;
     }
     else if (playerChoice === "Y") {
         // We want to draw Find the equivalent sign and add the point value
         var equivalentSignForPlayer = opponentToPlayerSigns.get(opponentChoice);
-        console.log(equivalentSignForPlayer);
-        return DRAW + choiceToPointValue.get(equivalentSignForPlayer);
+        return DRAW + opponentToPointValue.get(opponentChoice);
     }
     else {
-        return LOSS;
+        return LOSS + playerWeaknesses.get(opponentChoice);
     }
 }
 doTheThing("sample_input.txt");

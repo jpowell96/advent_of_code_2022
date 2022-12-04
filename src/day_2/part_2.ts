@@ -17,21 +17,26 @@ choiceToPointValue.set("X", 1);
 choiceToPointValue.set("Y", 2);
 choiceToPointValue.set("Z", 3);
 
-const opponentWeaknesses : Map<String, String> = new Map();
-// Rock (A) is weak to Paper (Y)
-opponentWeaknesses.set("A", "Y");
-// Paper (B) is weak to Scissors (Z)
-opponentWeaknesses.set("B", "Z");
-// Scissors (C) is weak to Rock (X)
-opponentWeaknesses.set("C", "X");
+const opponentToPointValue : Map<String, number> = new Map();
+choiceToPointValue.set("A", 1);
+choiceToPointValue.set("B", 2);
+choiceToPointValue.set("C", 3);
 
-const playerWeaknesses : Map<String, String> = new Map();
+const opponentWeaknesToPointValue : Map<String, number> = new Map();
+// Rock (A) is weak to Paper (Y)
+opponentWeaknesToPointValue.set("A", 2);
+// Paper (B) is weak to Scissors (Z)
+opponentWeaknesToPointValue.set("B", 3);
+// Scissors (C) is weak to Rock (X)
+opponentWeaknesToPointValue.set("C", 1);
+
+const playerWeaknesses : Map<String, number> = new Map();
 // Rock (A) beats Scissors (Z)
-playerWeaknesses.set("A", "Z");
+playerWeaknesses.set("A", 3);
 // Paper (B) beats Rock (X)
-playerWeaknesses.set("B", "X");
+playerWeaknesses.set("B", 1);
 // Scissors (C) beats Paper (Y)
-playerWeaknesses.set("C", "Y");
+playerWeaknesses.set("C", 2);
 
 
 const opponentToPlayerSigns : Map<String, String> = new Map();
@@ -70,16 +75,16 @@ async function doTheThing(filePath: string) : Promise<void> {
 function riggedRockPaperScissors(opponentChoice: String, playerChoice : String) : number {
   if (playerChoice === "Z") {
     // We want to win the game. Find the weakness
-    const opponentWeakness : String | undefined =  opponentWeaknesses.get(opponentChoice);
-    return WIN + choiceToPointValue.get(opponentWeakness);
+    const opponentWeakness : number | undefined =  opponentWeaknesToPointValue.get(opponentChoice);
+    console.log("Opponent Weakness: " + opponentWeakness);
+    return WIN + opponentWeakness;
    } else if (playerChoice === "Y") {
     // We want to draw Find the equivalent sign and add the point value
-    const equivalentSignForPlayer :  String | undefined = opponentToPlayerSigns.get(opponentChoice);
-    console.log(equivalentSignForPlayer);
-    return DRAW + choiceToPointValue.get(equivalentSignForPlayer);
+    console.log("Opponent Value: " + opponentToPointValue.get(opponentChoice));
+    return DRAW + opponentToPointValue.get(opponentChoice);
    } else {
-    return LOSS;
+    return LOSS +  playerWeaknesses.get(opponentChoice);
    }
 }
 
-doTheThing("sample_input.txt");
+doTheThing("input.txt");
