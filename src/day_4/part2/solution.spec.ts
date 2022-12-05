@@ -44,11 +44,13 @@ describe("Overlap test cases", () => {
         expect(overlaps(left, right)).toBe(false);
     })
 
-    test("Two pairs that do not overlap reversed", () => {
+    test("Two pairs where left is much greater than right", () => {
         const left = [6,8];
         const right = [2,4];
         debugger;
         expect(overlaps(left, right)).toBe(false);
     })
+
+    
 
 });
