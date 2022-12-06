@@ -14,7 +14,7 @@ export interface CargoCraneCommand {
 export type CargoShip =  {[column : number] : String[]};
 const cargo : {[column : number] : String[]}= {
     1 : ["P", "F", "M", "Q", "W", "G", "R", "T"],
-    2 : ["R", "F", "H"],
+    2 : ["H", "F", "R"],
     3 : ["P", "Z", "R", "V", "G", "H", "S", "D"],
     4 : ["Q", "H", "P", "B", "F", "W", "G"],
     5 : ["P", "S", "M", "J", "H"],
@@ -38,11 +38,11 @@ export function fromInputString(commandInWords: string) : CargoCraneCommand {
     return command;
 }
 
-export function executeCommand(command: CargoCraneCommand, ship: CargoShip) : void {
-   handleMultipleCrates(command, ship);
+export function executeCommand(command: CargoCraneCommand, ship: CargoShip) : CargoShip {
+  return handleMultipleCrates(command, ship);
 }
 
-function handleMultipleCrates(command: CargoCraneCommand, ship: CargoShip) : void {
+function handleMultipleCrates(command: CargoCraneCommand, ship: CargoShip) : CargoShip {
     const fromColumn : String[] = ship[command.from];
     const toColumn : String[] = ship[command.to];
 
@@ -52,20 +52,21 @@ function handleMultipleCrates(command: CargoCraneCommand, ship: CargoShip) : voi
     for (let i = 0; i < command.numberOfCratesToMove; i++) {
         const crate = fromColumn.pop();
         if (crate) {
-            craneArm.push(crate)
+            craneArm.push(crate);
         }
     }
 
     // Crane Arm to place the crates down
-    for (let i = 0; i < craneArm.length; i++) {
-        const crateFromCraneArm = craneArm.pop();
-
-        if (crateFromCraneArm) {
-            toColumn.push(crateFromCraneArm);
+    while (craneArm.length > 0) {
+        const popped = craneArm.pop();
+        if (popped) {
+            toColumn.push(popped);
         }
     }
+    return ship;
 }
 
+function doStuff() {
 // Question solution
 fs.readFile("input.txt", "utf-8", function read(err, data) {
     if (err) {
@@ -79,4 +80,9 @@ fs.readFile("input.txt", "utf-8", function read(err, data) {
     });
 
     console.log(cargo);
-})
+});
+
+}
+
+doStuff();
+// DMRDFRHHH

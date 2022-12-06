@@ -4,7 +4,7 @@ exports.executeCommand = exports.fromInputString = void 0;
 var fs = require('fs');
 var cargo = {
     1: ["P", "F", "M", "Q", "W", "G", "R", "T"],
-    2: ["R", "F", "H"],
+    2: ["H", "F", "R"],
     3: ["P", "Z", "R", "V", "G", "H", "S", "D"],
     4: ["Q", "H", "P", "B", "F", "W", "G"],
     5: ["P", "S", "M", "J", "H"],
@@ -27,7 +27,7 @@ function fromInputString(commandInWords) {
 }
 exports.fromInputString = fromInputString;
 function executeCommand(command, ship) {
-    handleMultipleCrates(command, ship);
+    return handleMultipleCrates(command, ship);
 }
 exports.executeCommand = executeCommand;
 function handleMultipleCrates(command, ship) {
@@ -42,22 +42,27 @@ function handleMultipleCrates(command, ship) {
         }
     }
     // Crane Arm to place the crates down
-    for (var i = 0; i < craneArm.length; i++) {
-        var crateFromCraneArm = craneArm.pop();
-        if (crateFromCraneArm) {
-            toColumn.push(crateFromCraneArm);
+    while (craneArm.length > 0) {
+        var popped = craneArm.pop();
+        if (popped) {
+            toColumn.push(popped);
         }
     }
+    return ship;
 }
-// Question solution
-fs.readFile("input.txt", "utf-8", function read(err, data) {
-    if (err) {
-        throw err;
-    }
-    var commands = data.split("\n");
-    commands.map(function (command) { return fromInputString(command); })
-        .forEach(function (command) {
-        executeCommand(command, cargo);
+function doStuff() {
+    // Question solution
+    fs.readFile("input.txt", "utf-8", function read(err, data) {
+        if (err) {
+            throw err;
+        }
+        var commands = data.split("\n");
+        commands.map(function (command) { return fromInputString(command); })
+            .forEach(function (command) {
+            executeCommand(command, cargo);
+        });
+        console.log(cargo);
     });
-    console.log(cargo);
-});
+}
+doStuff();
+// DMRDFHHHH
