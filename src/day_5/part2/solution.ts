@@ -39,14 +39,30 @@ export function fromInputString(commandInWords: string) : CargoCraneCommand {
 }
 
 export function executeCommand(command: CargoCraneCommand, ship: CargoShip) : void {
+   handleMultipleCrates(command, ship);
+}
+
+function handleMultipleCrates(command: CargoCraneCommand, ship: CargoShip) : void {
     const fromColumn : String[] = ship[command.from];
     const toColumn : String[] = ship[command.to];
+
+    const craneArm : String[] = [];
+
+    // Crane Arm to pick up the crates, preserving order
     for (let i = 0; i < command.numberOfCratesToMove; i++) {
-            const popped = fromColumn.pop();
-           if (popped) {
-            toColumn.push(popped);
-           }
-        
+        const crate = fromColumn.pop();
+        if (crate) {
+            craneArm.push(crate)
+        }
+    }
+
+    // Crane Arm to place the crates down
+    for (let i = 0; i < craneArm.length; i++) {
+        const crateFromCraneArm = craneArm.pop();
+
+        if (crateFromCraneArm) {
+            toColumn.push(crateFromCraneArm);
+        }
     }
 }
 
