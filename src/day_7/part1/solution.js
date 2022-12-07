@@ -1,6 +1,23 @@
 "use strict";
 exports.__esModule = true;
 exports.findAll = exports.populateDirectorySize = exports.buildDirectoryStructure = void 0;
+var fs = require("fs");
+fs.readFile("input.txt", "utf-8", function read(err, data) {
+    if (err) {
+        throw err;
+    }
+    var commands = data.split("\n");
+    // 1. Build the file structure
+    var fileSystemTree = buildDirectoryStructure(commands);
+    // 2. Populate the sizes
+    populateDirectorySize(fileSystemTree);
+    // 3. Find the directories less than 100k
+    var result = findAll(hasLessThan100kSize, fileSystemTree);
+    var totalSizeOfDirecotires = result
+        .map(function (node) { return (node === null || node === void 0 ? void 0 : node.size) ? node.size : 0; })
+        .reduce(function (acc, val) { return acc + val; }, 0);
+    console.log(totalSizeOfDirecotires);
+});
 function buildDirectoryStructure(commands) {
     // 1. Create ROOT Dir
     var rootDirectory = createRootDirectory();
@@ -86,19 +103,13 @@ function populateDirectorySize(node) {
         var current = stack.pop();
         switch (current.kind) {
             case "directory":
-                // Add all your children to the stack
-                console.log(current.name);
                 var children = Object.values(current.children);
                 var visitedChildren = 0;
                 // To do a postorder, we only mark a node as visited if all it's children are visted.
-                // So we check that first.
                 for (var _i = 0, children_1 = children; _i < children_1.length; _i++) {
                     var child = children_1[_i];
                     if (visited.has(child)) {
                         visitedChildren += 1;
-                    }
-                    else {
-                        stack.push(child);
                     }
                 }
                 if (children.length === visitedChildren) {
@@ -110,6 +121,10 @@ function populateDirectorySize(node) {
                 }
                 else {
                     stack.push(current);
+                    for (var _a = 0, children_2 = children; _a < children_2.length; _a++) {
+                        var child = children_2[_a];
+                        stack.push(child);
+                    }
                 }
                 break;
             case "file":
@@ -133,8 +148,8 @@ function findAll(predicate, root) {
         }
         if (current.kind === "directory") {
             var children = Object.values(current.children);
-            for (var _i = 0, children_2 = children; _i < children_2.length; _i++) {
-                var child = children_2[_i];
+            for (var _i = 0, children_3 = children; _i < children_3.length; _i++) {
+                var child = children_3[_i];
                 stack.push(child);
             }
         }

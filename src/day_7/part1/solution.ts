@@ -1,4 +1,27 @@
-import nodeTest from "node:test";
+const fs = require("fs");
+
+fs.readFile("input.txt", "utf-8", function read(err, data) {
+    if (err) {
+        throw err;
+    }
+    const commands : string[] = data.split("\n");
+    // 1. Build the file structure
+    const fileSystemTree: TreeNode = buildDirectoryStructure(commands);
+
+    // 2. Populate the sizes
+    populateDirectorySize(fileSystemTree);
+
+    // 3. Find the directories less than 100k
+    const result: TreeNode[] = findAll(hasLessThan100kSize, fileSystemTree);
+    const totalSizeOfDirecotires = result
+    .map(node => node?.size ? node.size : 0)
+    .reduce((acc, val) => acc + val, 0);
+    console.log(totalSizeOfDirecotires);
+})
+
+
+
+
 
 export interface TreeNode {
     parent?: TreeNode,
@@ -95,18 +118,13 @@ export function populateDirectorySize(node: TreeNode) : void {
 
         switch (current.kind) {
             case "directory":
-                // Add all your children to the stack
-                console.log(current.name);
                 const children : TreeNode[] = Object.values(current.children);
                 let visitedChildren : number = 0;
                 // To do a postorder, we only mark a node as visited if all it's children are visted.
-                // So we check that first.
                 for (const child of children) {
                     if (visited.has(child)) {
                         visitedChildren += 1;
-                    } else {
-                        stack.push(child);
-                    }
+                    } 
                 }
 
                 if (children.length === visitedChildren) {
@@ -119,6 +137,9 @@ export function populateDirectorySize(node: TreeNode) : void {
                     console.log(current.name)
                 } else {
                     stack.push(current);
+                    for (const child of children) {
+                        stack.push(child);
+                    }   
                 }
 
                 break;

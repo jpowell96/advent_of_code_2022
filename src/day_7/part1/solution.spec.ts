@@ -83,7 +83,7 @@ test("It calcualates size correctly", () => {
     }
 
     const result = populateDirectorySize(root);
-    expect(result).toBeDefined();
+    expect(root?.size).toEqual(30);
 });
 
 
