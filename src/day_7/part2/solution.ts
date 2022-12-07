@@ -22,7 +22,7 @@ fs.readFile("../input.txt", "utf-8", function read(err, data) {
         return totalDiskSpace - (totalDirectorySize - (treeNode.size as number)) > 30000000;
     }
 
-    // 3. Find the directories less than 100k
+    // 3. Find the directories that satisfy our boolean function
     const result: TreeNode[] = findAll(willAllowDiskSpaceDownload, fileSystemTree);
     const asSizes = result.map(node => node?.size ? node.size : Number.MAX_VALUE);
     console.log(Math.min(...asSizes));
