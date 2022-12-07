@@ -1,11 +1,12 @@
+import nodeTest from "node:test";
 
 export interface TreeNode {
     parent?: TreeNode,
-    name?: string,
+    name: string,
     size?: number,
-    children : {[name: string] : TreeNode};
+    children : {[name: string] : TreeNode},
+    kind: "directory" | "file"
 }
-
 
 
 export function buildDirectoryStructure(commands: string[]): TreeNode {
@@ -42,7 +43,8 @@ export function buildDirectoryStructure(commands: string[]): TreeNode {
                           const newDirectory : TreeNode = {
                             parent: currentWorkingDirectory,
                             name: directoryToChangeTo,
-                            children : {}
+                            children : {},
+                            kind: "directory"
                          };
                          currentWorkingDirectory.children[directoryToChangeTo] = newDirectory;
                     }
@@ -58,7 +60,19 @@ export function buildDirectoryStructure(commands: string[]): TreeNode {
                     currentWorkingDirectory.children[directoryName] = {
                         name: directoryName,
                         parent: currentWorkingDirectory,
-                        children: {}
+                        children: {},
+                        kind: "directory",
+                    }
+                }
+            } else {
+                const [fileSize, fileName] = args;
+                if (!currentWorkingDirectory.children[fileName]) {
+                    currentWorkingDirectory.children[fileName]  = {
+                        name: fileName,
+                        parent: currentWorkingDirectory,
+                        size: Number.parseInt(fileSize),
+                        children: {},
+                        kind: "file",
                     }
                 }
             }
@@ -69,12 +83,100 @@ export function buildDirectoryStructure(commands: string[]): TreeNode {
 }
 
 export function populateDirectorySize(node: TreeNode) : void {
+    const stack : TreeNode[] = []
+    // I want to do a post-order traversal to populate the size across the tree
+    stack.push(node);
+    const visited : Set<TreeNode> = new Set();
 
+    while (stack.length > 0) {
+        // Post order to populate?
+        // TODO: How do I get rid of annoying "may be undefined" errors?
+        const current : TreeNode  = (stack.pop() as TreeNode);
+
+        switch (current.kind) {
+            case "directory":
+                // Add all your children to the stack
+                console.log(current.name);
+                const children : TreeNode[] = Object.values(current.children);
+                let visitedChildren : number = 0;
+                // To do a postorder, we only mark a node as visited if all it's children are visted.
+                // So we check that first.
+                for (const child of children) {
+                    if (visited.has(child)) {
+                        visitedChildren += 1;
+                    } else {
+                        stack.push(child);
+                    }
+                }
+
+                if (children.length === visitedChildren) {
+                    // Sum all the kids, add node to visited.
+                    const totalSizeOfSubDirectories: number =
+                    children.map(child => child.size ? child.size : 0).reduce((accumulator, value) => accumulator + value, 0);
+                    
+                    current.size = totalSizeOfSubDirectories;
+                    visited.add(current);
+                    console.log(current.name)
+                } else {
+                    stack.push(current);
+                }
+
+                break;
+            case "file":
+                visited.add(current);
+                console.log(current.name)
+                break;
+            default:
+                throw new Error("Unrecognized type: " + current.kind);
+        }
+    }
 }
+
+export function findAll(predicate: (node: TreeNode) => boolean, root: TreeNode) : TreeNode[] {
+    const stack : TreeNode[] = [];
+    stack.push(root);
+    const result : TreeNode[]= [];
+
+    while (stack.length > 0) {
+        const current : TreeNode = (stack.pop() as TreeNode);
+
+        if (predicate(current)) {
+            result.push(current);
+        }
+
+        if (current.kind === "directory") {
+            const children : TreeNode[] = Object.values(current.children);
+            for (const child of children) {
+                stack.push(child);
+            }
+        }
+    }
+
+    return result;
+}
+
+
+const myNode : TreeNode = {
+    name: "",
+    size: 2,
+    kind: "directory",
+    children: {}
+}
+
+function hasLessThan100kSize(treeNode: TreeNode) : boolean {
+    if (!treeNode.size) {
+        return false;
+    } else {
+        return treeNode.kind === "directory" && treeNode.size < 100000;
+    }
+}
+
+//findAll(hasLessThan100kSize, myNode);
 
 function createRootDirectory() : TreeNode {
    return {
         name: "",
-        children: {}
+        children: {},
+        kind: "directory"
     };
 }
