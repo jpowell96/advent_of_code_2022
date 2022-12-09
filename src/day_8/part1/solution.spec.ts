@@ -15,7 +15,7 @@ test("it counts the tree correctly", () => {
     expect(result).toEqual(expectedVisibleTrees);
 });
 
-test("it is not visible from the left or right", () => {
+test("forest[1][3] is not visible from the left or right", () => {
     const row = 1;
     const column = 3;
 

@@ -1,5 +1,27 @@
+const fs = require("fs");
 
+fs.readFile("../input.txt", "utf-8", function read(err, data) {
+    if (err) {
+        throw err;
+    }
+    const rows : string[] = data.split("\n");
+    let forest: number[][] = [];
 
+    for (const rowString of rows) {
+        const forestRow : number[] = [];
+        for (let idx = 0; idx < rowString.length; idx++) {
+            forestRow.push(Number.parseInt(rowString.charAt(idx)));
+        }
+        forest.push(forestRow);
+    }
+
+    console.log(countVisibleTrees(forest));
+});
+
+// Run time is size of table * work done in each cell
+// size of table = row * column
+// work done in each cell = (r + c)
+// (rc) * (r + c)
 export function countVisibleTrees(forest: number[][]) : number {
     let visibleTrees = 0;
     for (let row = 0; row < forest.length; row++) {
@@ -28,7 +50,7 @@ export function isVisibleInColumn(treeRow: number, treeColumn: number, forest: n
     let isVisibleFromUp : boolean = true;
        for (let row = 0; row < treeRow; row++) {
          const otherTreeHeight = forest[row][treeColumn];
-         if (otherTreeHeight > treeHeight) {
+         if (otherTreeHeight >= treeHeight) {
             isVisibleFromUp = false;
             break;
          }
@@ -37,7 +59,7 @@ export function isVisibleInColumn(treeRow: number, treeColumn: number, forest: n
     let isVisibleFromDown : boolean = true;
         for (let row = treeRow + 1; row < forest.length; row++) {
           const otherTreeHeight = forest[row][treeColumn];
-          if (otherTreeHeight > treeHeight) {
+          if (otherTreeHeight >= treeHeight) {
              isVisibleFromDown = false;
              break;
           }
@@ -53,7 +75,7 @@ export function isVisibleInRow(treeRow: number, treeColumn: number, forest: numb
     let isVisibleFromLeft : boolean = true;
     for (let column = 0; column < treeColumn; column++) {
         const otherTreeHeight = forest[treeRow][column];
-        if (otherTreeHeight > treeHeight) {
+        if (otherTreeHeight >= treeHeight) {
             isVisibleFromLeft = false;
             break;
         }   
@@ -61,8 +83,8 @@ export function isVisibleInRow(treeRow: number, treeColumn: number, forest: numb
     let isVisibleFromRight : boolean = true;
     for (let column = treeColumn + 1; column < forest[0].length; column++) {
         const otherTreeHeight = forest[treeRow][column];
-        if (otherTreeHeight > treeHeight) {
-            isVisibleFromLeft = false;
+        if (otherTreeHeight >= treeHeight) {
+            isVisibleFromRight = false;
             break;
         }   
     }
