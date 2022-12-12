@@ -67,10 +67,13 @@ export function roundOfInspections(monkeys: {[id: number] : Monkey}, itemCount: 
     return itemCount;
 }
 
-let result : {[id: number] : number} = {};
-const itemCount = {};
+let finalItemCount : {[id: number] : number} = {};
+const itemCount : {[id: number] : number}  = {};
 for (let i = 0; i < 20; i++) {
-    result = roundOfInspections(idToMonkey, itemCount);
+    finalItemCount = roundOfInspections(idToMonkey, itemCount);
 }
 
-console.log(result);
+const monkeys : Monkey[] = Object.values(idToMonkey);
+monkeys.sort((a, b) => itemCount[b.id] - itemCount[a.id])
+console.log(itemCount[monkeys[0].id] * itemCount[monkeys[1].id]);
+console.log(finalItemCount);

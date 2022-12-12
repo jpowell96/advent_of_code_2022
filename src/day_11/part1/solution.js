@@ -42,7 +42,6 @@ exports.idToMonkey = {
     6: sexto,
     7: septo
 };
-// Divide worry level by 3
 function roundOfInspections(monkeys, itemCount) {
     for (var key in monkeys) {
         var monkey = monkeys[key];
@@ -60,9 +59,12 @@ function roundOfInspections(monkeys, itemCount) {
     return itemCount;
 }
 exports.roundOfInspections = roundOfInspections;
-var result = {};
+var finalItemCount = {};
 var itemCount = {};
 for (var i = 0; i < 20; i++) {
-    result = roundOfInspections(exports.idToMonkey, itemCount);
+    finalItemCount = roundOfInspections(exports.idToMonkey, itemCount);
 }
-console.log(result);
+var monkeys = Object.values(exports.idToMonkey);
+monkeys.sort(function (a, b) { return itemCount[b.id] - itemCount[a.id]; });
+console.log(itemCount[monkeys[0].id] * itemCount[monkeys[1].id]);
+console.log(finalItemCount);
