@@ -27,7 +27,7 @@ var Monkey = /** @class */ (function () {
 }());
 exports.Monkey = Monkey;
 var zero = new Monkey(0, [56, 56, 92, 65, 71, 61, 79], function (num) { return num * 7; }, function (num) { return num % 3 === 0 ? 3 : 7; });
-var prime = new Monkey(1, [61, 85], function (num) { return num + 5; }, function (num) { return num % 11 ? 6 : 4; });
+var prime = new Monkey(1, [61, 85], function (num) { return num + 5; }, function (num) { return num % 11 === 0 ? 6 : 4; });
 var duo = new Monkey(2, [54, 96, 82, 78, 69], function (num) { return num * num; }, function (num) { return num % 7 === 0 ? 0 : 7; });
 var san = new Monkey(3, [57, 59, 65, 95], function (num) { return num + 4; }, function (num) { return num % 2 === 0 ? 5 : 1; });
 var corto = new Monkey(4, [62, 67, 80], function (num) { return num * 17; }, function (num) { return num % 19 === 0 ? 2 : 6; });

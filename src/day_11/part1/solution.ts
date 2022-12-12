@@ -31,7 +31,7 @@ export class Monkey {
 }
 
 const zero: Monkey = new Monkey(0, [56,56,92,65,71,61,79], (num) => num * 7, (num) => num % 3 === 0 ? 3 : 7);
-const prime: Monkey = new Monkey(1, [61,85], (num) => num + 5, (num) => num % 11 ? 6 : 4);
+const prime: Monkey = new Monkey(1, [61,85], (num) => num + 5, (num) => num % 11 === 0 ? 6 : 4);
 const duo: Monkey = new Monkey(2, [54,96,82,78,69], (num) => num * num, (num) => num % 7 === 0 ? 0 : 7);
 const san: Monkey = new Monkey(3, [57,59,65,95], (num) => num + 4, (num) => num % 2 === 0 ? 5 : 1);
 const corto: Monkey = new Monkey(4, [62, 67, 80], (num) => num * 17, (num) => num % 19 === 0 ? 2 : 6);
