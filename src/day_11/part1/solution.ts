@@ -49,7 +49,6 @@ export const idToMonkey: {[id: number] : Monkey} = {
 
 };
 
-// Divide worry level by 3
 export function roundOfInspections(monkeys: {[id: number] : Monkey}, itemCount:  {[id: number] : number}) :  {[id: number] : number} {
     for (const key in monkeys) {
         const monkey : Monkey = monkeys[key];
