@@ -16,8 +16,7 @@ test("It parses Monkey input corectly", () => {
         2 : two,
         3: three
     };
-    const itemCount = {};
-    let result = {};
+
     for (let i = 0; i < 20; i++) {
        roundOfInspections(monkeyMap);
     }
