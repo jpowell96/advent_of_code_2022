@@ -3,6 +3,7 @@ exports.__esModule = true;
 exports.roundOfInspections = exports.idToMonkey = exports.Monkey = void 0;
 var Monkey = /** @class */ (function () {
     function Monkey(id, items, stressFunction, test) {
+        this.inspectionCount = 0;
         this.id = id;
         this.items = items;
         this.stressFunction = stressFunction;
@@ -11,6 +12,7 @@ var Monkey = /** @class */ (function () {
     /** For each item in items, inspect the item - applying the stressFunction */
     Monkey.prototype.inspect = function () {
         this.items = this.items.map(this.stressFunction);
+        this.inspectionCount += this.items.length;
     };
     Monkey.prototype.toss = function (monkeys) {
         // For each item, divide by 3. Then call test to decide who it goes to.
@@ -42,29 +44,20 @@ exports.idToMonkey = {
     6: sexto,
     7: septo
 };
-function roundOfInspections(monkeys, itemCount) {
+function roundOfInspections(monkeys) {
     for (var key in monkeys) {
         var monkey = monkeys[key];
         // 1. Inspect items
         monkey.inspect();
-        if (itemCount[monkey.id]) {
-            itemCount[monkey.id] = itemCount[monkey.id] + monkey.items.length;
-        }
-        else {
-            itemCount[monkey.id] = monkey.items.length;
-        }
         // 2. Toss items to the next people
         monkey.toss(monkeys);
     }
-    return itemCount;
 }
 exports.roundOfInspections = roundOfInspections;
-var finalItemCount = {};
-var itemCount = {};
 for (var i = 0; i < 20; i++) {
-    finalItemCount = roundOfInspections(exports.idToMonkey, itemCount);
+    roundOfInspections(exports.idToMonkey);
 }
 var monkeys = Object.values(exports.idToMonkey);
-monkeys.sort(function (a, b) { return itemCount[b.id] - itemCount[a.id]; });
-console.log(itemCount[monkeys[0].id] * itemCount[monkeys[1].id]);
-console.log(finalItemCount);
+monkeys.sort(function (a, b) { return b.inspectionCount - a.inspectionCount; });
+console.log(monkeys);
+console.log(monkeys[0].inspectionCount * monkeys[1].inspectionCount);

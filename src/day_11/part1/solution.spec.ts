@@ -19,8 +19,7 @@ test("It parses Monkey input corectly", () => {
     const itemCount = {};
     let result = {};
     for (let i = 0; i < 20; i++) {
-       const after =  roundOfInspections(monkeyMap, itemCount);
-       result = after;
+       roundOfInspections(monkeyMap);
     }
     expect(1).toEqual(1);
 });

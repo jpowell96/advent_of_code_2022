@@ -4,6 +4,7 @@ export class Monkey {
     readonly stressFunction : (old: number) => number;
     // Given an item, returns which monkey to throw the item to
     readonly test: (itemNumber: number) => number;
+    inspectionCount: number = 0;
 
     constructor(id: number, items: number[], stressFunction: (old: number) => number, test: (itemNumber: number) => number) {
         this.id = id;
@@ -15,6 +16,7 @@ export class Monkey {
     /** For each item in items, inspect the item - applying the stressFunction */
     public inspect() : void {
         this.items = this.items.map(this.stressFunction);
+        this.inspectionCount += this.items.length;
     }
 
     public toss(monkeys: {[id: number] : Monkey}) : void {
@@ -49,31 +51,21 @@ export const idToMonkey: {[id: number] : Monkey} = {
 
 };
 
-export function roundOfInspections(monkeys: {[id: number] : Monkey}, itemCount:  {[id: number] : number}) :  {[id: number] : number} {
+export function roundOfInspections(monkeys: {[id: number] : Monkey}) : void {
     for (const key in monkeys) {
         const monkey : Monkey = monkeys[key];
         // 1. Inspect items
         monkey.inspect();
-        if (itemCount[monkey.id]) {
-            itemCount[monkey.id] = itemCount[monkey.id] + monkey.items.length;
-        } else {
-            itemCount[monkey.id] = monkey.items.length;
-        }
-       
-
         // 2. Toss items to the next people
         monkey.toss(monkeys);
     }
-    return itemCount;
 }
 
-let finalItemCount : {[id: number] : number} = {};
-const itemCount : {[id: number] : number}  = {};
 for (let i = 0; i < 20; i++) {
-    finalItemCount = roundOfInspections(idToMonkey, itemCount);
+    roundOfInspections(idToMonkey);
 }
 
 const monkeys : Monkey[] = Object.values(idToMonkey);
-monkeys.sort((a, b) => itemCount[b.id] - itemCount[a.id])
-console.log(itemCount[monkeys[0].id] * itemCount[monkeys[1].id]);
-console.log(finalItemCount);
+monkeys.sort((a, b) => b.inspectionCount - a.inspectionCount);
+console.log(monkeys);
+console.log(monkeys[0].inspectionCount * monkeys[1].inspectionCount);
