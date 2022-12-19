@@ -1,22 +1,22 @@
 import { breadthFirstSearch, Point } from "./solution";
 
 
-// test("It finds the path for sample input", () => {
-//     const graph = [
-//         "Sabqponm","abcryxxl","accszExk","acctuvwj","abdefghi"]
-//     const start = {
-//         x: 0,
-//         y: 0
-//     };
-//     const end = {
-//         x: 2,
-//         y: 5
-//     };
+test("It finds the path for sample input", () => {
+    const graph = [
+        "Sabqponm","abcryxxl","accszExk","acctuvwj","abdefghi"]
+    const start = {
+        x: 0,
+        y: 0
+    };
+    const end = {
+        x: 2,
+        y: 5
+    };
 
-//     const result = breadthFirstSearch(graph, start, end);
-//     expect(result.length - 1).toEqual(31);
+    const result = breadthFirstSearch(graph, start, end);
+    expect(result.length - 1).toEqual(31);
 
-// });
+});
 
 test("It finds the path for the real input", () => {
     const graph = [

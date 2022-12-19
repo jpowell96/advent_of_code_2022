@@ -15,9 +15,9 @@ function asString(point: Point) {
 
 export function breadthFirstSearch(graph: string[], start: Point, end: Point) : Point[] {
     const queue = [];
-    const visited : string[] =[];
+    const visited : any = [];
+    visited[asString(start)] = true;
     queue.push(start);
-    visited.push(asString(start));
 
     const cameFrom : Map<Point, Point | undefined> = new Map();
     cameFrom.set(start, undefined);
@@ -41,27 +41,19 @@ export function breadthFirstSearch(graph: string[], start: Point, end: Point) : 
         const neighbors: Point[] = getNeighbors(current, graph);
         for (const neighbor of neighbors) {
             if (isInBounds(neighbor, graph) &&
-                !alreadyVisited(neighbor, visited)
+            !visited[asString(current)]
             && elevationToNeighbor(current, neighbor, graph) <= 1
             ) {
                 queue.push(neighbor);
                 cameFrom.set(neighbor, current);
             }
         }
-        if (!alreadyVisited(current, visited)) {
-            visited.push(asString(current));
-        }
+       visited[asString(current)] = true;
 
     }
 
     return [];
 }
-
-function alreadyVisited(point: Point, visited: string[]) : boolean {
-    const pointAsString = asString(point);
-    return visited.includes(pointAsString);
-}
-
 function getNeighbors(point: Point, graph: string[]) : Point[] {
     // UP
     const above = {
@@ -143,7 +135,7 @@ async function findThePath(fileName: string) : Promise<void> {
         }
     }
     console.log(`Find a path from [${start.x} , ${start.y}] to [${end.x} , ${end.y}]`);
-    const result = breadthFirstSearch(graph, start, end);
+    const result = breadthFirstSearch(graph, end, start);
 
     console.log(result.length);
    
